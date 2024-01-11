@@ -1,0 +1,24 @@
+num_clients: 10
+num_epochs: 3
+batch_size: 128
+num_rounds: 50
+clients_per_round: 10
+learning_rate: 0.01
+client_resources:
+  num_cpus: 4
+  num_gpus: 1.0
+client_fn:
+  _target_: task.client.get_client_fn
+  _recursive_: false
+evaluate_fn:
+  _target_: task.server.get_evaluate_fn
+server_device: cuda:0
+fit_config:
+  _target_: task.utils.get_on_fit_config_fn
+model:
+  _target_: task.models.Net
+strategy:
+  _target_: task.strategy.DiffLRStrategy
+  min_fit_clients: ${clients_per_round}
+  min_available_clients: ${clients_per_round}
+  on_fit_config_fn: ${fit_config}
